@@ -1,0 +1,186 @@
+.dashboard {
+  background: #f7f9fb;
+  min-height: 100vh;
+  padding: 2rem 0;
+  color: #181818;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #181818;
+    padding: 1.5rem 2rem;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(79, 140, 255, 0.07);
+    position: relative;
+    z-index: 10;
+    gap: 1.5rem;
+  }
+  &__header-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: #2563eb;
+    margin: 0;
+    flex: 1;
+    text-shadow: 0 2px 8px rgba(79, 140, 255, 0.07);
+  }
+  &__header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  &__add-button,
+  &__logout-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(79, 140, 255, 0.08);
+    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+    outline: none;
+    &:hover,
+    &:focus {
+      background: #174ea6;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(79, 140, 255, 0.15);
+    }
+  }
+  &__logout-button {
+    background: #f0f4f8;
+    color: #2563eb;
+    font-weight: 600;
+    border: 1.5px solid #2563eb;
+    &:hover,
+    &:focus {
+      background: #2563eb;
+      color: #fff;
+    }
+  }
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  &__card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    padding: 1.5rem 1.25rem 1.25rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s, transform 0.2s;
+    position: relative;
+    color: #181818;
+    max-width: 370px;
+    min-width: 0;
+    width: 100%;
+    margin: 0 auto;
+    &:hover {
+      box-shadow: 0 6px 32px rgba(79, 140, 255, 0.13);
+      transform: translateY(-2px) scale(1.01);
+    }
+  }
+  &__card-image {
+    width: 100%;
+    height: 180px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    background: #f0f4f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      background: #f0f4f8;
+      display: block;
+    }
+  }
+  &__card-content {
+    flex: 1;
+    margin-bottom: 1rem;
+  }
+  &__card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #181818;
+    margin-bottom: 0.5rem;
+  }
+  &__card-description {
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: calc(1.5em * 4); // 4 lines
+  }
+  &__card-actions {
+    display: flex;
+    gap: 0.5rem;
+    button {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border: none;
+      border-radius: 5px;
+      background: #f0f4f8;
+      color: #2563eb;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      &:hover {
+        background: #e0eaff;
+        color: #174ea6;
+      }
+    }
+  }
+  @media (max-width: 700px) {
+    &__header {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 1.1rem 0.7rem;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(79, 140, 255, 0.1);
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+    &__header-title {
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    &__header-actions {
+      flex-direction: column;
+      gap: 0.7rem;
+      width: 100%;
+    }
+    &__add-button,
+    &__logout-button {
+      width: 100%;
+      font-size: 1rem;
+      padding: 0.7rem 0;
+    }
+  }
+}
