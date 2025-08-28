@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import styles from "./PostModal.module.scss";
 
 type PostModalProps = {
@@ -18,7 +19,7 @@ type PostModalProps = {
     description: string;
     imageUrl?: string;
     imagePath?: string;
-    category?: string;
+    category?: string | null;
     used?: boolean;
   };
   loading?: boolean;
@@ -158,7 +159,13 @@ export const PostModal: React.FC<PostModalProps> = ({
         </label>
         {preview && (
           <div className={styles.imagePreview}>
-            <img src={preview} alt="Preview" />
+            <Image
+              src={preview}
+              alt="Preview"
+              width={200}
+              height={200}
+              style={{ objectFit: "contain" }}
+            />
             <button
               type="button"
               onClick={handleRemoveImage}
