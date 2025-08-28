@@ -8,6 +8,7 @@ import { useAuth } from "../components/AuthProvider";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { FilterBar } from "../components/FilterBar";
+import { useNotification } from "../components/NotificationContext";
 
 interface Post {
   id: string;
@@ -23,6 +24,7 @@ interface Post {
 export default function DashboardPage() {
   const { user, loading: authLoading, logout } = useAuth();
   const router = useRouter();
+  const { showNotification } = useNotification();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -163,10 +165,15 @@ export default function DashboardPage() {
       setShowModal(false);
       setEditPost(null);
       await fetchPosts();
+      showNotification(
+        editPost ? "Post updated successfully!" : "Post created successfully!",
+        "success"
+      );
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to save post";
       setModalError(errorMessage);
+      showNotification("Failed to save post", "error");
     } finally {
       setModalLoading(false);
     }
@@ -184,7 +191,10 @@ export default function DashboardPage() {
       )
     )
       return;
+
     setLoading(true);
+    showNotification("Deleting post...", "info", 2000);
+
     try {
       // Delete the post from the database
       const { error: deleteError } = await supabase
@@ -192,13 +202,17 @@ export default function DashboardPage() {
         .delete()
         .eq("id", post.id);
       if (deleteError) throw deleteError;
+
       // If the post has an image, delete it from storage
       if (post.image_path) {
         await supabase.storage.from("post-images").remove([post.image_path]);
       }
+
       await fetchPosts();
-    } catch {
-      alert("Failed to delete post.");
+      showNotification("Post deleted successfully!", "success");
+    } catch (error: unknown) {
+      console.error("Delete error:", error);
+      showNotification("Failed to delete post", "error");
     } finally {
       setLoading(false);
     }
@@ -207,28 +221,51 @@ export default function DashboardPage() {
   const handleCopyText = (post: Post) => {
     const text = post.description || "";
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(text);
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          showNotification("Text copied to clipboard!", "success");
+        })
+        .catch(() => {
+          showNotification("Failed to copy text", "error");
+        });
     } else {
       // fallback for older browsers
       const textarea = document.createElement("textarea");
       textarea.value = text;
       document.body.appendChild(textarea);
       textarea.select();
-      document.execCommand("copy");
+      const success = document.execCommand("copy");
       document.body.removeChild(textarea);
+
+      if (success) {
+        showNotification("Text copied to clipboard!", "success");
+      } else {
+        showNotification("Failed to copy text", "error");
+      }
     }
   };
 
   const handleDownloadImage = (post: Post) => {
-    if (!post.image_url) return;
+    if (!post.image_url) {
+      showNotification("No image to download", "error");
+      return;
+    }
+
     // Try to get the original file name from image_path, fallback to 'image.jpg'
     let fileName = "image.jpg";
     if (post.image_path) {
       const parts = post.image_path.split("/");
       fileName = parts[parts.length - 1];
     }
+
+    showNotification("Downloading image...", "info", 2000);
+
     fetch(post.image_url)
-      .then((res) => res.blob())
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch image");
+        return res.blob();
+      })
       .then((blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -238,6 +275,11 @@ export default function DashboardPage() {
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
+        showNotification("Image downloaded successfully!", "success");
+      })
+      .catch((error) => {
+        console.error("Download error:", error);
+        showNotification("Failed to download image", "error");
       });
   };
 
@@ -250,11 +292,20 @@ export default function DashboardPage() {
         <div className="dashboard__header-actions">
           <button
             className="dashboard__add-button"
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setShowModal(true);
+              showNotification("Opening post editor...", "info", 1500);
+            }}
           >
             Add Post
           </button>
-          <button className="dashboard__logout-button" onClick={logout}>
+          <button
+            className="dashboard__logout-button"
+            onClick={() => {
+              showNotification("Logging out...", "info", 2000);
+              logout();
+            }}
+          >
             Logout
           </button>
         </div>

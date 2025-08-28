@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import styles from "./PostModal.module.scss";
+import { useNotification } from "./NotificationContext";
 
 type PostModalProps = {
   isOpen: boolean;
@@ -34,6 +35,7 @@ export const PostModal: React.FC<PostModalProps> = ({
   loading,
   error,
 }) => {
+  const { showNotification } = useNotification();
   const [title, setTitle] = useState(initialData?.title || "");
   const [description, setDescription] = useState(
     initialData?.description || ""
@@ -76,6 +78,12 @@ export const PostModal: React.FC<PostModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!title.trim()) {
+      showNotification("Please enter a title", "error");
+      return;
+    }
+
     onSubmit({
       title,
       description,

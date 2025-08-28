@@ -3,9 +3,11 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { useNotification } from "../../components/NotificationContext";
 
 export default function SignupPage() {
   const router = useRouter();
+  const { showNotification } = useNotification();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,11 +17,19 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    showNotification("Creating account...", "info", 2000);
+
     const { error } = await supabase.auth.signUp({ email, password });
     setLoading(false);
     if (error) {
       setError(error.message);
+      showNotification("Signup failed: " + error.message, "error");
     } else {
+      showNotification(
+        "Account created successfully! Redirecting...",
+        "success"
+      );
       router.push("/dashboard");
     }
   };
@@ -57,6 +67,22 @@ export default function SignupPage() {
           {loading ? "Signing up..." : "Sign Up"}
         </button>
       </form>
+      <div style={{ marginTop: "1rem", textAlign: "center" }}>
+        <p style={{ margin: "0.5rem 0", color: "#666" }}>
+          Already have an account?{" "}
+          <a
+            href="/auth/login"
+            style={{ color: "#2563eb", textDecoration: "none" }}
+            onClick={(e) => {
+              e.preventDefault();
+              showNotification("Navigating to login...", "info", 1500);
+              router.push("/auth/login");
+            }}
+          >
+            Login here
+          </a>
+        </p>
+      </div>
     </div>
   );
 }

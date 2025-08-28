@@ -4,6 +4,7 @@ import "./globals.css";
 import "./styles/dashboard.scss";
 import "./styles/auth.scss";
 import { AuthProvider } from "./components/AuthProvider";
+import { NotificationProvider } from "./components/NotificationContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <NotificationProvider>{children}</NotificationProvider>
+        </AuthProvider>
       </body>
     </html>
   );
